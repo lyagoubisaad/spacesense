@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaf</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <style>
+        #mapid {
+            height: 600px;
+            width: 1200px;
+        }
+    </style>
+</head>
+<body>
+<a name="Link"></a>
+<button><a href="?1">Click Over Here</a></button>
+<form action="http://127.0.0.1:5000/" method="post">
+    <label>Shape Figure</label> : <input type="text" name="figure"/>
+    <br>
+    <label>Shape Coords</label> : <input type="text" name="coords"/>
+    <br>
+    <label>Label</label> : <input type="text" name="label"/>
+    <br>
+    <input type="submit"/>
+</form>
+<div id="mapid"></div>
+<script>
+    //var labels = JSON.parse({{ labels }});
+    //var labels = String.parse({{ labels }});
+    //console.log(labels);
+    var labels = JSON.parse('{{ labels | safe}}');
+    var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    L.tileLayer('//{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        attribution: 'donn&eacute;es &copy; <a href="//osm.org/copyright">OpenStreetMap</a>/ODbL - rendu <a href="//openstreetmap.fr">OSM France</a>',
+        minZoom: 1,
+        maxZoom: 20
+    }).addTo(mymap);
+    for(var i=0;i<labels.length;i++) {
+        if(labels[i][0]=="marker") {
+            console.log("marker");
+            var tmp = String(labels[i][1]);
+            console.log(tmp)
+            var marker = L.marker(String(labels[i][1])).addTo(mymap);
+        }
+        if(labels[i][0]=="circle") {
+            console.log("circle");
+            var tmp = String(labels[i][1]);
+            console.log(tmp);
+            var circle = L.circle(String(labels[i][1]), {color: 'red', fillColor: '#f03', fillOpacity: 0.5, radius: 500}).addTo(mymap);
+        }
+    }
+    //var marker = L.marker([51.5, -0.09]).addTo(mymap);
+    //var marker = L.marker([51.5, -0.11]).addTo(mymap);
+    var circle = L.circle([51.508, -0.11], {color: 'red', fillColor: '#f03', fillOpacity: 0.5, radius: 500}).addTo(mymap);
+    var polygon = L.polygon([[51.509, -0.08],[51.503, -0.06],[51.51, -0.047]]).addTo(mymap);
+    </script>
+</body>
+</html>
